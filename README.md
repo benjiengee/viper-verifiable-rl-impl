@@ -11,7 +11,7 @@ This repository implements and tests the viper algorithm on the following enviro
 
 - CartPole
 - Atari Pong
-- ToyPong (tbd)
+- ToyPong
 
 ## Usage
 
