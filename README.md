@@ -1,6 +1,6 @@
 # Viper
 
-Read the accompanying blog post here (tbd).
+Read the accompanying blog post [here](https://safe-rl-team.github.io/viper-verifiable-reinforcement-learning/).
 
 **V**erifiability via **I**terative **P**olicy **E**xt**R**action (2019) [paper](https://arxiv.org/abs/1805.08328)]
 
