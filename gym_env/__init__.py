@@ -1,5 +1,5 @@
-import gym
-from gym import register
+import gymnasium as gym
+from gymnasium import register
 from stable_baselines3.common.env_util import make_atari_env
 from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.vec_env import VecFrameStack, DummyVecEnv

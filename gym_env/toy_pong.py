@@ -1,7 +1,7 @@
 import os
 
-import gym
-from gym.spaces import Box, Discrete
+import gymnasium as gym
+from gymnasium.spaces import Box, Discrete
 import numpy as np
 
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
@@ -64,7 +64,9 @@ class ToyPong(gym.Env):
     def rand_vel(self):
         return np.random.uniform(self.min_speed, self.max_speed) * np.random.choice([-1, 1])
 
-    def reset(self):
+    def reset(self, *, seed=None, options=None):
+        # gymnasium API: return (obs, info)
+        # note: we ignore seed/options, but signature kept for compatibility
         self.paddle_x = self.width / 2
         self.ball_pos_x = self.width / 2
         if self.args.rand_ball_start:
@@ -80,7 +82,7 @@ class ToyPong(gym.Env):
             self.render()
 
         self.observations = [self.observation()]
-        return self.observation()
+        return self.observation(), {}  # new API expects info
 
     def observation(self):
         return np.array([self.paddle_x, self.ball_pos_x, self.ball_pos_y, self.ball_vel_x, self.ball_vel_y])
@@ -112,7 +114,8 @@ class ToyPong(gym.Env):
             self.ball_pos_y = 0
             self.ball_vel_y *= -1
 
-        done = False
+        terminated = False
+        truncated = False
         reward = 1
         # If the ball hits the paddle, it will bounce back
         # The paddle needs a small implicit thickness (> ball vel y) so that the ball cannot pass through
@@ -126,17 +129,17 @@ class ToyPong(gym.Env):
             # from pprint import pprint
             # pprint(self.observations)
             # import pdb; pdb.set_trace()
-            done = True
+            terminated = True
             reward = 0
 
         if self.t >= self.max_timesteps:
-            done = True
+            truncated = True
 
         if self.render_mode == "human":
             self.render()
 
         self.observations.append(self.observation())
-        return self.observation(), reward, done, {}
+        return self.observation(), reward, terminated, truncated, {}
 
     def replay(self):
         for obs in self.observations:

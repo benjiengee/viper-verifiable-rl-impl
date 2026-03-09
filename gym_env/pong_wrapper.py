@@ -1,8 +1,8 @@
 import collections
 
 import numpy as np
-import gym
-from gym import spaces
+import gymnasium as gym
+from gymnasium import spaces
 from stable_baselines3.common.vec_env import VecEnv
 
 """
@@ -107,12 +107,13 @@ class PongWrapper(gym.Wrapper):
         return [env.ale.getRAM() for env in self.env.unwrapped.envs]
 
     def reset(self, **kwargs):
+        """Forward reset through wrapped env and return matching gymnasium signature."""
         self.extracted_obs_hist.clear()
-        obs = self.env.reset(**kwargs)
+        obs, info = self.env.reset(**kwargs)
         self.update_extracted_state()
         if self.return_extracted_obs:
-            return self.get_extracted_obs()
-        return obs
+            return self.get_extracted_obs(), info
+        return obs, info
 
     def update_extracted_state(self):
         extracted_states = np.zeros(self._obs_shape, dtype=np.float32)
@@ -124,11 +125,11 @@ class PongWrapper(gym.Wrapper):
         self.extracted_obs_hist.append(extracted_states)
 
     def step(self, action):
-        obs_img, reward, done, info = self.env.step(action)
+        obs_img, reward, terminated, truncated, info = self.env.step(action)
         self.update_extracted_state()
         if self.return_extracted_obs:
-            return self.get_extracted_obs(), reward, done, info
-        return obs_img, reward, done, info
+            return self.get_extracted_obs(), reward, terminated, truncated, info
+        return obs_img, reward, terminated, truncated, info
 
     def get_extracted_obs(self):
         return self.extracted_obs_hist[-1]

@@ -1,7 +1,7 @@
 import warnings
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
-import gym
+import gymnasium as gym
 import numpy as np
 
 from stable_baselines3.common import base_class
@@ -84,7 +84,12 @@ def evaluate_policy(
     while (episode_counts < episode_count_targets).any():
         actions, states = model.predict(observations, state=states, episode_start=episode_starts,
                                         deterministic=deterministic)
-        observations, rewards, dones, infos = env.step(actions)
+        step_result = env.step(actions)
+        if len(step_result) == 5:
+            observations, rewards, terminated, truncated, infos = step_result
+            dones = np.logical_or(terminated, truncated)
+        else:
+            observations, rewards, dones, infos = step_result
         current_rewards += rewards
         current_lengths += 1
         for i in range(n_envs):
