@@ -5,12 +5,17 @@ from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.vec_env import VecFrameStack, DummyVecEnv
 
 from gym_env.pong_wrapper import PongWrapper
+import icu_sepsis
 
 register(
     id='ToyPong-v0',
     entry_point='gym_env.toy_pong:ToyPong',
     kwargs={'args': None}
 )
+# register(
+#     id="Sepsis/ICU-Sepsis-v2",
+#     entry_point="icu_sepsis.envs:ICUSepsisEnv"
+# )
 
 
 def make_env(args, test_viper=False):
@@ -23,5 +28,7 @@ def make_env(args, test_viper=False):
         return DummyVecEnv([lambda: gym.make(args.env_name) for _ in range(args.n_env)])
     elif args.env_name == "ToyPong-v0":
         return DummyVecEnv([lambda: Monitor(gym.make(args.env_name, args=args)) for _ in range(args.n_env)])
+    elif args.env_name == "Sepsis/ICU-Sepsis-v2":
+        return DummyVecEnv([lambda: gym.make(args.env_name) for _ in range(args.n_env)])
 
     raise NotImplementedError(f"Environment {args.env_name} not implemented")

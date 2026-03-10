@@ -20,7 +20,9 @@ def train_oracle(args):
         model.learn(total_timesteps=args.total_timesteps,
                     reset_num_timesteps=not args.resume, tb_log_name=log_name)
     else:
-        model.learn(total_timesteps=args.total_timesteps, eval_freq=args.total_timesteps // 10,
+        # model.learn(total_timesteps=args.total_timesteps, eval_freq=args.total_timesteps // 10,
+        #             reset_num_timesteps=not args.resume, tb_log_name=log_name)
+        model.learn(total_timesteps=args.total_timesteps,
                     reset_num_timesteps=not args.resume, tb_log_name=log_name)
         
     model_path = get_oracle_path(args)
@@ -75,6 +77,22 @@ ENV_TO_MODEL = {
             'policy_kwargs': {
                 'net_arch': [64, dict(pi=[128, 64], vf=[64, 64])]
             }
+        }
+    },
+    'Sepsis/ICU-Sepsis-v2': {
+        'model': DQN,
+        'kwargs': {
+            'policy': 'MlpPolicy',
+            'learning_rate': 1e-3,
+            'buffer_size': 100_000,    # max transitions stored in replay buffer
+            'learning_starts': 1_000,  # num steps collected before performing gradient updates
+            'batch_size': 64,          # SGD batch size
+            'gamma': 1,                # discount factor
+            'train_freq': 4,           # num env steps for each gradient update
+            'target_update_interval': 1_000,   # num steps between target network updates
+            'exploration_fraction': 0.1,       # fraction of total training steps before epsilon decays
+            'exploration_final_eps': 0.05,     # minimum eps after decay
+            'policy_kwargs': dict(net_arch=[256,256]) # 2 hidden layers, 256 width
         }
     }
 }

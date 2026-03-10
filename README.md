@@ -40,6 +40,11 @@ Cart pole:
 python main.py train-oracle --env-name CartPole-v1 --n-env 8 --total-timesteps 100_000
 ```
 
+ICU Sepsis:
+```
+python main.py train-oracle --env-name Sepsis/ICU-Sepsis-v2 --n-env 8 --total-timesteps 100_000
+```
+
 You can always resume training a stored model by adding the `--resume` flag to the same command.
 
 ### Running viper
